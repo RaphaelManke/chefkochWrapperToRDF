@@ -55,7 +55,7 @@ function buildGraphFromJsonSearchResult($jsonObject) {
 		$me = $graph -> resource($baseURL . $value['RezeptShowID'], 'arecipe:Recipe');
 		foreach ($value as $key1 => $value1) {
 			if ($key1 != "hasVideo"){
-			$me -> set('rdf:' . $key1, $value1);		
+			$me -> addLiteral('rdf:' . $key1, $value1);		
 			}
 		}
 		$me -> set('rdf:sameAs', $wrapperURL.$value['RezeptShowID']);
@@ -75,7 +75,8 @@ function buildGraphFromJsonRecipeResult ($jsonObject){
 	$rezeptNamespace -> set('arecipe', "http://purl.org/amicroformat/arecipe/");
 	$rezeptNamespace -> set('rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	$rezeptNamespace -> set('wrapper', "http://chefkoch:8888/lookup/");
-	$me = $graph -> resource($baseURL . $jsonObject['rezept_show_id'], 'arecipe:Recipe');
+	$url = $baseURL . $jsonObject['rezept_show_id'];
+	$me = $graph -> resource($url, 'arecipe:Recipe');
 	foreach ($jsonObject as $key => $value) {
 		$type = gettype($value);
 		$namespace = "rdf";
@@ -90,11 +91,12 @@ function buildGraphFromJsonRecipeResult ($jsonObject){
 				case 'rezept_in_rezeptsammlung':
 					break;
 				case 'rezept_zutaten':
-
-					foreach ($value as $position => $zutat) {
-						$bn = $graph -> newBNodeId();
-						$me -> set($namespace . ":" . $key, $bn);
-						$graph -> addResource($bn, $namespace . ":id", $zutat["id"]);
+					foreach ($value as $rezept_zutaten => $zutat) {
+						$bn = $graph -> newBNode();
+						$me -> add($namespace . ":" . $key, $bn);
+						foreach ($zutat as $attribut => $attributWert) {
+							$bn -> addLiteral($namespace . ":" . $attribut, $attributWert);
+						}
 					}
 					break;
 				case 'rezept_zutaten_is_basic':
@@ -121,4 +123,3 @@ function buildGraphFromJsonRecipeResult ($jsonObject){
 	}
 		return $graph;
 }
-?>

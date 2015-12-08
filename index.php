@@ -7,11 +7,11 @@ include 'library/rezeptsuche.php';
 $url = $_SERVER["REQUEST_URI"];
 $urlRel = after("index.php", $url);
 $url = explode("/", $urlRel);
-//$method = $url[1];
-//$suchbegriff = $url[2];
-$method = "explore";
+$method = $url[1];
+$suchbegriff = $url[2];
+//$method = "lookup";
 //$suchbegriff = "390421126430613"; 
-$suchbegriff = "kuchen"; 
+//$suchbegriff = "kuchen"; 
 switch ($method) {
 	case 'explore' :
 		generallSearch($suchbegriff);
@@ -43,7 +43,7 @@ function generallSearch($suchbegriff) {
 }
 
 function specificSearch($ID) {
-	if ($ID == "123") {
+	if ($ID == "") {
 		echo "Error! Der Suchbegriff ist leer.";
 		//var_dump($url);
 	} else {
