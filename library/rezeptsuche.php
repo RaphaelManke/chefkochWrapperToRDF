@@ -15,13 +15,14 @@ function einzelnesRezept($id) {
 	$api_rezept_url = "http://api.chefkoch.de/api/1.0/api-recipe.php";
 	$params = "ID=" . $id;
 	$url_rezept = $api_rezept_url . "?" . $params;
-	$details = json_decode(file_get_contents($url_rezept), true);
-	$rezept_beschribung = $details["result"][0]["rezept_zubereitung"];
-	$rezept_bild = $details["result"][0]["rezept_bilder"][0]["big"]["file"];
-	$result = array('beschreibung' => $rezept_beschribung, 'bild' => $rezept_bild);
+	$details = file_get_contents($url_rezept);
+	//$rezept_beschribung = $details["result"][0]["rezept_zubereitung"];
+	//$rezept_bild = $details["result"][0]["rezept_bilder"][0]["big"]["file"];
+	//$result = array('beschreibung' => $rezept_beschribung, 'bild' => $rezept_bild);
 
-	return result;
+	return $details	;
 }
+
 
 function produktsuche($produkt, $plz) {
 	$api = "https://www.simplora.de/articles?";
@@ -42,7 +43,7 @@ function produktsuche($produkt, $plz) {
 
 }
 
-function buildGraphFromJson($jsonObject, $returnFormat) {
+function buildGraphFromJsonSearchResult($jsonObject) {
 	$baseURL = 'http://chefkoch.de/rezept/';
 	$wrapperURL = "http://chefkoch:8888/index.php/lookup/";
 	$graph = new EasyRdf_Graph();
@@ -60,15 +61,64 @@ function buildGraphFromJson($jsonObject, $returnFormat) {
 		$me -> set('rdf:sameAs', $wrapperURL.$value['RezeptShowID']);
 	}
 
-	$format = $returnFormat;
-	$data = $graph -> serialise($format);
-	if (!is_scalar($data)) {
-		$data = var_export($data, true);
-	}
 	//$parser = new EasyRdf_Parser_Rdfa ();
 	//$parser -> parse($graph, $data, 'turtle', $baseURL);
 	
 	//return $data;
 	return $graph;
+}
+function buildGraphFromJsonRecipeResult ($jsonObject){
+	$baseURL = 'http://chefkoch.de/rezept/';
+	$wrapperURL = "http://chefkoch:8888/index.php/lookup/";
+	$graph = new EasyRdf_Graph();
+	$rezeptNamespace = new EasyRdf_Namespace();
+	$rezeptNamespace -> set('arecipe', "http://purl.org/amicroformat/arecipe/");
+	$rezeptNamespace -> set('rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+	$rezeptNamespace -> set('wrapper', "http://chefkoch:8888/lookup/");
+	$me = $graph -> resource($baseURL . $jsonObject['rezept_show_id'], 'arecipe:Recipe');
+	foreach ($jsonObject as $key => $value) {
+		$type = gettype($value);
+		$namespace = "rdf";
+		if ($type == "string") {
+			$me -> set($namespace.':' . $key, $value);
+		}
+		elseif ($type == "array" && !empty($value)) {
+			switch ($key) {
+				case 'rezept_videos':
+					//TODO
+					break;
+				case 'rezept_in_rezeptsammlung':
+					break;
+				case 'rezept_zutaten':
+
+					foreach ($value as $position => $zutat) {
+						$bn = $graph -> newBNodeId();
+						$me -> set($namespace . ":" . $key, $bn);
+						$graph -> addResource($bn, $namespace . ":id", $zutat["id"]);
+					}
+					break;
+				case 'rezept_zutaten_is_basic':
+
+					break;
+				case 'rezept_tags':
+
+					break;
+				case 'rezept_bilder':
+
+					break;
+				case 'rezept_votes':
+
+					break;
+				case 'rezept_statistik':
+
+					break;
+						
+				default:
+
+					break;
+			}
+		}
+	}
+		return $graph;
 }
 ?>

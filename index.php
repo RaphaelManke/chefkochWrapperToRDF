@@ -7,15 +7,18 @@ include 'library/rezeptsuche.php';
 $url = $_SERVER["REQUEST_URI"];
 $urlRel = after("index.php", $url);
 $url = explode("/", $urlRel);
-$method = $url[1];
-$suchbegriff = $url[2];
+//$method = $url[1];
+//$suchbegriff = $url[2];
+$method = "explore";
+//$suchbegriff = "390421126430613"; 
+$suchbegriff = "kuchen"; 
 switch ($method) {
 	case 'explore' :
 		generallSearch($suchbegriff);
 		break;
 
 	case 'lookup' :
-		specificSearch();
+		specificSearch($suchbegriff);
 		break;
 
 	default :
@@ -26,20 +29,29 @@ switch ($method) {
 		break;
 }
 function generallSearch($suchbegriff) {
-	if ($suchbegriff == "123") {
+	if ($suchbegriff == "") {
 		echo "Error! Der Suchbegriff ist leer.";
 		//var_dump($url);
 	} else {
 		echo "# Suchergebnis für die Suche nach dem Suchbegriff " . $suchbegriff . "\n";
 		$search = json_decode(sucheRezepte($suchbegriff, 20), JSON_UNESCAPED_UNICODE);
 		$recipes = $search["result"];
-		$recipeInN3 = buildGraphFromJson($recipes, "n3");
+		$recipeInN3 = buildGraphFromJsonSearchResult($recipes);
 		echo $recipeInN3 -> serialise("turtle");
 		//echo $recipeInN3;
 	}
 }
 
-function specificSearch() {
-	echo '<http://chefkoch.de/rezept/bla> <http://www.w3.org/1999/02/22-rdf-syntax-ns#bild_group_id> "399375" .';
-}
+function specificSearch($ID) {
+	if ($ID == "123") {
+		echo "Error! Der Suchbegriff ist leer.";
+		//var_dump($url);
+	} else {
+		echo "# Suchergebnis für die Suche nach dem Rezept mit der ID " . $ID . "\n";
+		$search = json_decode(einzelnesRezept($ID), JSON_UNESCAPED_UNICODE);
+		$recipes = $search["result"][0];
+		$recipeInN3 = buildGraphFromJsonRecipeResult($recipes);
+		echo $recipeInN3 -> serialise("turtle");
+		//echo $recipeInN3;
+	}}
 ?>
