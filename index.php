@@ -22,7 +22,7 @@ $suchbegriff = $url [2];
  $method = "naehrwerte";
 // $suchbegriff = "390421126430613";
 // $suchbegriff = "kuchen";
-//$suchbegriff = "1211326";
+$suchbegriff = "1211326";
 /*
  * Anfangs Weiche um zwischen allgemeiner Suche und spezieller Suche zu unterscheiden.
  */
