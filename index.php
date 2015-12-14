@@ -19,9 +19,10 @@ $suchbegriff = $url [2];
 /*
  * zum lokalen Debuggen
  */
-// $method = "lookup";
+ $method = "naehrwerte";
 // $suchbegriff = "390421126430613";
 // $suchbegriff = "kuchen";
+//$suchbegriff = "1211326";
 /*
  * Anfangs Weiche um zwischen allgemeiner Suche und spezieller Suche zu unterscheiden.
  */
@@ -34,7 +35,8 @@ switch ($method) {
 		specificSearch ( $suchbegriff );
 		break;
 	case 'naehrwerte' :
-		naehrwertSuche($suchbegriff);
+		$result = naehrwertSuche($suchbegriff);
+		print_r($result["results"]);
 		break;
 	
 	default :
