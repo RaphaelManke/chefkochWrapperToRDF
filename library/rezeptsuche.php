@@ -41,23 +41,33 @@ function einzelnesRezept($id) {
  * return Array $value 
  */
 function naehrwertSuche($id) {
-	$ch = curl_init ();
 	//$query = "https://shop.rewe.de/PD1211326";
 	$query = "https://shop.rewe.de/PD" . $id;
 	$api_key = "40581aa5770c4331b477ca6b191549da6a6ebe6117061cab22ffe286a3bec687a28dd324679b4b65c0e05e44c47739c45a4e56111fd9762d4e3dc345e60732bfe413ad4f56724681aeb33b4055f1e54a";
 	$api = "https://api.import.io/store/connector/d1d51bb1-5caf-4369-aa66-026ef8cfd987/_query?input=webpage/url:" . $query . "&&_apikey=" . $api_key;
+		$result = curl_exec ( $ch );
+	(Array) $value = json_decode ( curlData($api), True );
+	// schließe den cURL-Handle und gebe die Systemresourcen frei
+	return $value;
+}
+/**
+ * macht einen GET auf eine URL
+ * @param String $url
+ * @return String $result
+ */
+function curlData(String $url) {
+	$ch = curl_init ();
 	
 	// setze die URL und andere Optionen
 	curl_setopt ( $ch, CURLOPT_URL, $api );
 	curl_setopt ( $ch, CURLOPT_HEADER, 0 );
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 	
-	// führe die Aktion aus und gebe die Daten an den Browser weiter
+	// führe die Aktion aus und speichere die Daten
 	$result = curl_exec ( $ch );
-	(Array) $value = json_decode ( $result, True );
 	// schließe den cURL-Handle und gebe die Systemresourcen frei
 	curl_close ( $ch );
-	return $value;
+	return (String) $result;
 }
 /**
  * Erzeugt einen Graph aus dem JSON Dokument der allgemeinen Rezeptsuche.
