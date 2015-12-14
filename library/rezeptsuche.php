@@ -1,29 +1,44 @@
 <?php
+/**
+ * Hilfsfunktion die zum Auslesen der Parameter verwendet wird.
+ */
 function after ($this, $inthat)
     {
         if (!is_bool(strpos($inthat, $this)))
         return substr($inthat, strpos($inthat,$this)+strlen($this));
     };
+/**
+ * sucht auf Chefkoch mit hilfe des Suchbegriffs
+ * @param unknown $suchbegriff
+ * @param number $anzahlErgebnisse
+ * @return string
+ */
 function sucheRezepte($suchbegriff, $anzahlErgebnisse = 10) {
 	$suchParameter = "Suchbegriff=" . $suchbegriff . "&limit=" . $anzahlErgebnisse;
 	$api_such_url = "http://api.chefkoch.de/api/1.1/api-recipe-search.php?";
 	$result = file_get_contents($api_such_url.$suchParameter);
 	return $result;
 }
-
+/**
+ * sucht nach einem einzelnen Rezept anhand der ID.
+ * @param Integer $id
+ * @return string
+ */
 function einzelnesRezept($id) {
 	$api_rezept_url = "http://api.chefkoch.de/api/1.0/api-recipe.php";
 	$params = "ID=" . $id;
 	$url_rezept = $api_rezept_url . "?" . $params;
 	$details = file_get_contents($url_rezept);
-	//$rezept_beschribung = $details["result"][0]["rezept_zubereitung"];
-	//$rezept_bild = $details["result"][0]["rezept_bilder"][0]["big"]["file"];
-	//$result = array('beschreibung' => $rezept_beschribung, 'bild' => $rezept_bild);
-
 	return $details	;
 }
 
-
+/**
+ * NOCH NICHT IMPLEMENTIERT.
+ * @param unknown $produkt
+ * @param unknown $plz
+ * @return string
+ */ 
+//TODO
 function produktsuche($produkt, $plz) {
 	$api = "https://www.simplora.de/articles?";
 	//search_term=milch&filters%5Bshops%5D%5B%5D=rewe-840093&from=60&size=60&zipcode=76131";
@@ -38,11 +53,14 @@ function produktsuche($produkt, $plz) {
 	$search_url = "https://www.simplora.de/articles?search_term=milch&filters%5Bshops%5D%5B%5D=rewe-840093&from=60&size=60&zipcode=76131";
 	// Öffnen der Datei mit den oben definierten HTTP-Headern
 	$file = file_get_contents($search_url, false, $context);
-	//$result = file_get_contents($search_url);
 	return $file;
 
 }
-
+/**
+ * Erzeugt einen Graph aus dem JSON Dokument der allgemeinen Rezeptsuche.
+ * @param Array $jsonObject
+ * @return EasyRdf_Graph
+ */
 function buildGraphFromJsonSearchResult($jsonObject) {
 	$baseURL = 'http://chefkoch.de/rezept/';
 	$wrapperURL = "http://chefkoch:8888/index.php/lookup/";
@@ -50,7 +68,7 @@ function buildGraphFromJsonSearchResult($jsonObject) {
 	$rezeptNamespace = new EasyRdf_Namespace();
 	$rezeptNamespace -> set('arecipe', "http://purl.org/amicroformat/arecipe/");
 	$rezeptNamespace -> set('rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-	$rezeptNamespace -> set('wrapper', "http://chefkoch:8888/lookup/");
+	$rezeptNamespace -> set('wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/");
 		foreach ($jsonObject as $key => $value) {
 		$me = $graph -> resource($baseURL . $value['RezeptShowID'], 'arecipe:Recipe');
 		foreach ($value as $key1 => $value1) {
@@ -58,15 +76,16 @@ function buildGraphFromJsonSearchResult($jsonObject) {
 			$me -> addLiteral('rdf:' . $key1, $value1);		
 			}
 		}
-		$me -> set('rdf:sameAs', $wrapperURL.$value['RezeptShowID']);
+		$me -> addResource('rdf:sameAs', "wrapper:".$value['RezeptShowID']);
 	}
 
-	//$parser = new EasyRdf_Parser_Rdfa ();
-	//$parser -> parse($graph, $data, 'turtle', $baseURL);
-	
-	//return $data;
 	return $graph;
 }
+/**
+ * Erzeugt einen Graph aus dem JSON Dokument der spezifischen Rezeptsuche.
+ * @param Array $jsonObject
+ * @return EasyRdf_Graph
+ */
 function buildGraphFromJsonRecipeResult ($jsonObject){
 	$baseURL = 'http://chefkoch.de/rezept/';
 	$wrapperURL = "http://chefkoch:8888/index.php/lookup/";
@@ -99,27 +118,11 @@ function buildGraphFromJsonRecipeResult ($jsonObject){
 						}
 					}
 					break;
-				case 'rezept_zutaten_is_basic':
-
-					break;
-				case 'rezept_tags':
-
-					break;
-				case 'rezept_bilder':
-
-					break;
-				case 'rezept_votes':
-
-					break;
-				case 'rezept_statistik':
-
-					break;
-						
 				default:
 
 					break;
 			}
 		}
 	}
-		return $graph;
+	return $graph;
 }

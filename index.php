@@ -1,17 +1,30 @@
 <?php
+/*
+ * definiert den Header.
+ */
 header('Content-Type: text/turtle; charset=UTF-8');
-//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+/*
+ * lädt die benötigten Libarys.
+ */
 require 'library/EasyRdf.php';
 include 'library/rezeptsuche.php';
-//$header = apache_request_headers ();
+/*
+ * liest die Anfrage URL und damit die Parameter aus.
+ */
 $url = $_SERVER["REQUEST_URI"];
 $urlRel = after("index.php", $url);
 $url = explode("/", $urlRel);
 $method = $url[1];
 $suchbegriff = $url[2];
+/*
+ * zum lokalen Debuggen
+ */
 //$method = "lookup";
 //$suchbegriff = "390421126430613"; 
 //$suchbegriff = "kuchen"; 
+/*
+ * Anfangs Weiche um zwischen allgemeiner Suche und spezieller Suche zu unterscheiden.
+ */
 switch ($method) {
 	case 'explore' :
 		generallSearch($suchbegriff);
@@ -28,6 +41,10 @@ switch ($method) {
 		//exit ;
 		break;
 }
+/**
+ * startet eine Suche mit einem Suchbegriff.
+ * @param String $suchbegriff
+ */
 function generallSearch($suchbegriff) {
 	if ($suchbegriff == "") {
 		echo "Error! Der Suchbegriff ist leer.";
@@ -38,10 +55,12 @@ function generallSearch($suchbegriff) {
 		$recipes = $search["result"];
 		$recipeInN3 = buildGraphFromJsonSearchResult($recipes);
 		echo $recipeInN3 -> serialise("turtle");
-		//echo $recipeInN3;
 	}
 }
-
+/**
+ * Startet die Suche nach genau einem Rezept, anhand einer RezeptShowID.
+ * @param Integer $ID
+ */
 function specificSearch($ID) {
 	if ($ID == "") {
 		echo "Error! Der Suchbegriff ist leer.";
@@ -54,4 +73,4 @@ function specificSearch($ID) {
 		echo $recipeInN3 -> serialise("turtle");
 		//echo $recipeInN3;
 	}}
-?>
+
