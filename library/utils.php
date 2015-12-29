@@ -59,3 +59,20 @@ function curlData($url) {
 	curl_close ( $ch );
 	return (String) $result;
 };
+function buildTree ($graph, $nodeId, $array){
+	$me = $graph-> resource ($nodeId);
+	foreach ($array as $key => $value){
+		$type = gettype ( $value );
+		if ($type != "array") {
+			$me -> add("rdf:".$key, $value);
+		}
+		else {
+			$bn = $graph->newBNode ();
+			$me -> add("rdf:".$key, $bn);
+			buildTree($graph, $bn, $value);
+		}
+
+	}
+
+
+};

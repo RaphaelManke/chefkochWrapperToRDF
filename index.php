@@ -9,6 +9,8 @@ header ( 'Content-Type: text/turtle; charset=UTF-8' );
 require 'library/EasyRdf.php';
 include 'library/rezeptsuche.php';
 include 'library/getReweProduct.php';
+include 'library/getReweSearch.php';
+
 include_once 'library/utils.php';
 /*
  * liest die Anfrage URL und damit die Parameter aus.
@@ -21,11 +23,9 @@ $suchbegriff="";
 foreach ($url as $key => $value){
 	if ($key == 1){
 		$method = $value;
-		echo "Methode:".$value."\n";
 	}
 	elseif ($key > 1){
 		$suchbegriff .= $value."/";
-		echo "Suchbegriff:".$suchbegriff."\n";
 	}
 }
 //$suchbegriff = "https://shop.rewe.de/kuehlprodukte/margarine-butter-fett/rama-classic-250g/PD2165358";
@@ -55,6 +55,10 @@ switch ($method) {
 		break;
 	case 'naehrwerte' :
 		$result = naehrwertSuche($suchbegriff);
+		print_r($result["results"]);
+		break;
+	case 'reweSuche' :
+		$result = getReweSearch($suchbegriff);
 		print_r($result["results"]);
 		break;
 	case 'reweProdukt' :
