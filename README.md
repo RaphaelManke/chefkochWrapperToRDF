@@ -8,5 +8,9 @@ http://yourServer.de/index.php/{param1}/{param2}
 param 1 = {explore | lookup}
 	=> explore := es wird eine Suche mit Suchbegriff durchgeführt
 	=> lookup := es werden die weiteren Rezeptinfos anhand der Rezept ID abgerufen
+	=> reweProdukt := es werden Produktinfos vom Rewe lieferservice abgerufen
 
-param 2 = Der Suchbegriff dieser kann eine Suchbegriff oder eine ID eines Rezeptes sein.
+param 2 = Der Suchbegriff dieser kann sein:
+			- ein Suchbegriff für ein Rezept
+			- eine ID eines Rezeptes sein
+			- eine Produkt Id oder Url von Rewe.
