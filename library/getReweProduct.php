@@ -1,24 +1,7 @@
 <?php 
 include 'simple_html_dom.php';
-function get_string_between($string, $start, $end){
-	$string = ' ' . $string;
-	$ini = strpos($string, $start);
-	if ($ini == 0) return '';
-	$ini += strlen($start);
-	$len = strpos($string, $end, $ini) - $ini;
-	return substr($string, $ini, $len);
-}
-function strrevpos($instr, $needle)
-{
-	$rev_pos = strpos (strrev($instr), strrev($needle));
-	if ($rev_pos===false) return false;
-	else return strlen($instr) - $rev_pos - strlen($needle);
-};
-function after_last ($this, $inthat)
-{
-	if (!is_bool(strrevpos($inthat, $this)))
-		return substr($inthat, strrevpos($inthat, $this)+strlen($this));
-};
+include_once 'utils.php';
+include_once 'EasyRdf.php';
 function getHtml ($base) {
 	
 	$curl = curl_init();
@@ -37,20 +20,21 @@ function getHtml ($base) {
 	return $html->load($str);
 }
 
-function getReweData($idOrLink){
-	$id = preg_replace('/[^0-9]+/', '',  after_last("/", $idOrLink));
+function getReweData($idOrLink, $format){
+	$id = preg_replace('/[^0-9]+/', '',  after_last("/PD", $idOrLink));
 	if ($id == ""){
 		$id = preg_replace('/[^0-9]+/', '',  $idOrLink);
 	}
 	$base = "https://shop.rewe.de/PD".$id;
 	$html = getHtml($base);
 	$values = [];
+	$values["type"] = "product";
 	foreach ($html -> find('section[class=product-container product-detail]') as $a){
 		foreach($a->find('#productTitle') as $e) {
 			$values['productTitle'] = $e->innertext;
 		}
 		foreach($a->find('comment') as $e){
-			$values["gtin"] = get_string_between($e->innertext, "gtin: ", '"/> -->');
+			$values["gtin"] = preg_replace('/[^0-9]+/', '',  $e->innertext);
 		}
 		foreach($a->find('link') as $e){
 			$values["link"] = $e->href;
@@ -70,7 +54,9 @@ function getReweData($idOrLink){
 		}
 		foreach ($a->find('div[class*=nutritional-values]') as $e){
 			foreach ($e->find('tbody tr') as $tabel_row){
-				$temp[$tabel_row->children(0) -> innertext] = array(
+				$str = $tabel_row->children(0) -> innertext;
+				$str=str_replace(array('ä','ö','ü','ß','Ä','Ö','Ü'),array('ae','oe','ue','ss','Ae','Oe','Ue'),$str);
+				$temp[preg_replace('/[^a-zA-Z]+/', '_', $str)] = array(
 						"value" => preg_replace('/[^0-9,.]+/', '',$tabel_row->children(1) -> innertext),
 						"currency" => preg_replace('/[^a-zA-Z]+/', '',$tabel_row->children(1) -> innertext)
 				);
@@ -82,9 +68,46 @@ function getReweData($idOrLink){
 	
 	
 	}
+	switch ($format) {
+		case "array":
+			return $values;
+			break;
+		case "turtle":
+			return toTurtle($values);
+			break;
+		default:
+			return "falsches Format gewaehlt!";
+			break;
+	}
 	return $values;
-}
+};
+function toTurtle ($array) {
+	$graph = new EasyRdf_Graph();
+	$rezeptNamespace = new EasyRdf_Namespace ();
+	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
+	$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/" );
+	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
+	buildTree($graph, $array["link"], $array);
+	return $graph->serialise ( "turtle" );
+};
+function buildTree ($graph, $nodeId, $array){
+	$me = $graph-> resource ($nodeId);
+	foreach ($array as $key => $value){
+		$type = gettype ( $value );
+		if ($type != "array") {
+			$me -> add("rdf:".$key, $value);
+		}
+		else {
+			$bn = $graph->newBNode ();
+			$me -> add("rdf:".$key, $bn);
+			buildTree($graph, $bn, $value);
+		}
+	
+	}
+	
+	
+};
 //$comment = $html->find('comment');
-print_r(getReweData("7890168"))."\n";
-echo "second \n";
-print_r(getReweData("https://shop.rewe.de/kuehlprodukte/eier/rewe-bio-frische-bio-eier-6-stueck/PD197892"))."\n";
+// print_r(getReweData("7890168"))."\n";
+// echo "second \n";
+// print_r(getReweData("https://shop.rewe.de/kuehlprodukte/eier/rewe-bio-frische-bio-eier-6-stueck/PD197892"))."\n";

@@ -8,21 +8,39 @@ header ( 'Content-Type: text/turtle; charset=UTF-8' );
  */
 require 'library/EasyRdf.php';
 include 'library/rezeptsuche.php';
+include 'library/getReweProduct.php';
+include_once 'library/utils.php';
 /*
  * liest die Anfrage URL und damit die Parameter aus.
  */
 $url = $_SERVER ["REQUEST_URI"];
+//$url = "index.php/reweProdukt/https://shop.rewe.de/kuehlprodukte/margarine-butter-fett/rama-classic-250g/PD2165358";
 $urlRel = after ( "index.php", $url );
 $url = explode ( "/", $urlRel );
-$method = $url [1];
-$suchbegriff = $url [2];
+$suchbegriff="";
+foreach ($url as $key => $value){
+	if ($key == 1){
+		$method = $value;
+		echo "Methode:".$value."\n";
+	}
+	elseif ($key > 1){
+		$suchbegriff .= $value."/";
+		echo "Suchbegriff:".$suchbegriff."\n";
+	}
+}
+//$suchbegriff = "https://shop.rewe.de/kuehlprodukte/margarine-butter-fett/rama-classic-250g/PD2165358";
+//$suchbegriff = $url [2];
 /*
  * zum lokalen Debuggen
  */
- $method = "naehrwerte";
+//$method = "reweProdukt";
+//$method = "explore";
+//$method = "lookup";
 // $suchbegriff = "390421126430613";
-// $suchbegriff = "kuchen";
-$suchbegriff = "1211326";
+ //$suchbegriff = "kuchen";
+//$suchbegriff = "1211326";
+//$suchbegriff = "7890168";
+//$suchbegriff = "197892";
 /*
  * Anfangs Weiche um zwischen allgemeiner Suche und spezieller Suche zu unterscheiden.
  */
@@ -32,13 +50,23 @@ switch ($method) {
 		break;
 	
 	case 'lookup' :
+		$suchbegriff = preg_replace('/[^0-9]+/', '',  $suchbegriff);
 		specificSearch ( $suchbegriff );
 		break;
 	case 'naehrwerte' :
 		$result = naehrwertSuche($suchbegriff);
 		print_r($result["results"]);
 		break;
-	
+	case 'reweProdukt' :
+		//TODO Cleanup
+		//$result = getReweData($suchbegriff,"array");
+		$result2 = getReweData($suchbegriff,"turtle");
+		
+		
+		//print_r($result);
+		print_r($result2);
+		break;
+		
 	default :
 		header ( 'HTTP/1.0 404 Not Found' );
 		echo "Error 404 Not Found \n";

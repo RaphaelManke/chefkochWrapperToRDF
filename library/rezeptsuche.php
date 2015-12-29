@@ -1,12 +1,5 @@
 <?php
-/**
- * Hilfsfunktion die zum Auslesen der Parameter verwendet wird.
- */
-function after($this, $inthat) {
-	if (! is_bool ( strpos ( $inthat, $this ) ))
-		return substr ( $inthat, strpos ( $inthat, $this ) + strlen ( $this ) );
-}
-;
+//require 'utils.php';
 /**
  * sucht auf Chefkoch mit hilfe des Suchbegriffs
  * 
@@ -50,25 +43,7 @@ function naehrwertSuche($id) {
 	// schließe den cURL-Handle und gebe die Systemresourcen frei
 	return $value;
 }
-/**
- * macht einen GET auf eine URL
- * @param String $url
- * @return String $result
- */
-function curlData($url) {
-	$ch = curl_init ();
-	
-	// setze die URL und andere Optionen
-	curl_setopt ( $ch, CURLOPT_URL, $url );
-	curl_setopt ( $ch, CURLOPT_HEADER, 0 );
-	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-	
-	// führe die Aktion aus und speichere die Daten
-	$result = curl_exec ( $ch );
-	// schließe den cURL-Handle und gebe die Systemresourcen frei
-	curl_close ( $ch );
-	return (String) $result;
-}
+
 /**
  * Erzeugt einen Graph aus dem JSON Dokument der allgemeinen Rezeptsuche.
  * 
@@ -83,14 +58,15 @@ function buildGraphFromJsonSearchResult($jsonObject) {
 	$rezeptNamespace->set ( 'arecipe', "http://purl.org/amicroformat/arecipe/" );
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
 	$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/" );
+	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
 	foreach ( $jsonObject as $key => $value ) {
 		$me = $graph->resource ( $baseURL . $value ['RezeptShowID'], 'arecipe:Recipe' );
 		foreach ( $value as $key1 => $value1 ) {
 			if ($key1 != "hasVideo") {
-				$me->addLiteral ( 'rdf:' . $key1, $value1 );
+				$me->add ( 'rdf:' . $key1, $value1 );
 			}
 		}
-		$me->addResource ( 'rdf:sameAs', "wrapper:" . $value ['RezeptShowID'] );
+		$me->addResource ( 'owl:sameAs', "wrapper:" . $value ['RezeptShowID'] );
 	}
 	
 	return $graph;
@@ -109,6 +85,8 @@ function buildGraphFromJsonRecipeResult($jsonObject) {
 	$rezeptNamespace->set ( 'arecipe', "http://purl.org/amicroformat/arecipe/" );
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
 	$rezeptNamespace->set ( 'wrapper', "http://chefkoch:8888/lookup/" );
+	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
+	
 	$url = $baseURL . $jsonObject ['rezept_show_id'];
 	$me = $graph->resource ( $url, 'arecipe:Recipe' );
 	foreach ( $jsonObject as $key => $value ) {
