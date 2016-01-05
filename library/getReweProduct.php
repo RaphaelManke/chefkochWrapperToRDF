@@ -37,7 +37,7 @@ function getReweData($idOrLink, $format){
 			$values["gtin"] = preg_replace('/[^0-9]+/', '',  $e->innertext);
 		}
 		foreach($a->find('link') as $e){
-			$values["link"] = $e->href;
+			$values["link"] = preg_replace('/amp-/', '',  $e->href); 
 	
 		}
 		foreach($a->find('ul[class=article-image] img') as $e){

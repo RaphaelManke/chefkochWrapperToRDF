@@ -89,7 +89,7 @@ function generallSearch($suchbegriff) {
 		// var_dump($url);
 	} else {
 		echo "# Suchergebnis für die Suche nach dem Suchbegriff " . $suchbegriff . "\n";
-		$search = json_decode ( sucheRezepte ( $suchbegriff, 20 ), JSON_UNESCAPED_UNICODE );
+		$search = json_decode ( sucheRezepte ( $suchbegriff, 2 ), JSON_UNESCAPED_UNICODE );
 		$recipes = $search ["result"];
 		$recipeInN3 = buildGraphFromJsonSearchResult ( $recipes );
 		echo $recipeInN3->serialise ( "turtle" );
