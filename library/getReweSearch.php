@@ -20,7 +20,8 @@ function getReweSearch($suchbegriff) {
 		}
 		$formattetArray [$resultItem] ["identifier"] = "searchResult";
 		$formattetArray [$resultItem] ["suchbegriff"] = $suchbegriff;
-		$formattetArray [$resultItem] ["wrapperLink"] = "http://wrapper:8888/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
+		//$formattetArray [$resultItem] ["wrapperLink"] = "http://wrapper:8888/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
+		$formattetArray [$resultItem] ["wrapperLink"] = "http://manke-hosting/wrapper/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
 	}
 	//print_r($result);
 	// print_r($formattetArray);
