@@ -36,11 +36,13 @@ foreach ($url as $key => $value){
 //$method = "reweProdukt";
 //$method = "explore";
 //$method = "lookup";
+//$method = "reweSuche";
 // $suchbegriff = "390421126430613";
  //$suchbegriff = "kuchen";
 //$suchbegriff = "1211326";
 //$suchbegriff = "7890168";
 //$suchbegriff = "197892";
+//$suchbegriff ="Mandeln";
 /*
  * Anfangs Weiche um zwischen allgemeiner Suche und spezieller Suche zu unterscheiden.
  */
@@ -63,12 +65,12 @@ switch ($method) {
 		break;
 	case 'reweProdukt' :
 		//TODO Cleanup
-		//$result = getReweData($suchbegriff,"array");
-		$result2 = getReweData($suchbegriff,"turtle");
+		$result = getReweDataByApi($suchbegriff,"turtle");
+		//$result2 = getReweData($suchbegriff,"turtle");
 		
 		
-		//print_r($result);
-		print_r($result2);
+		print_r($result);
+		//print_r($result2);
 		break;
 		
 	default :

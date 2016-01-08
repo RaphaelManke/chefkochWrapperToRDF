@@ -57,7 +57,8 @@ function buildGraphFromJsonSearchResult($jsonObject) {
 	$rezeptNamespace = new EasyRdf_Namespace ();
 	$rezeptNamespace->set ( 'arecipe', "http://purl.org/amicroformat/arecipe/" );
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
-	$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/" );
+	//$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/" );
+	$rezeptNamespace->set ( 'wrapper', "http://wrapper:8888/index.php/lookup/" );
 	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
 	foreach ( $jsonObject as $key => $value ) {
 		$me = $graph->resource ( $baseURL . $value ['RezeptShowID'], 'arecipe:Recipe' );
@@ -79,19 +80,20 @@ function buildGraphFromJsonSearchResult($jsonObject) {
  */
 function buildGraphFromJsonRecipeResult($jsonObject) {
 	$baseURL = 'http://chefkoch.de/rezept/';
-	$wrapperURL = "http://chefkoch:8888/index.php/lookup/";
+	//$wrapperURL = "http://chefkoch:8888/index.php/lookup/";
 	$graph = new EasyRdf_Graph ();
 	$rezeptNamespace = new EasyRdf_Namespace ();
 	$rezeptNamespace->set ( 'arecipe', "http://purl.org/amicroformat/arecipe/" );
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
 	$rezeptNamespace->set ( 'wrapper', "http://chefkoch:8888/lookup/" );
 	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
-	
+	$rezeptNamespace->set('reweSuche', "http://wrapper:8888/index.php/reweSuche/");
 	$url = $baseURL . $jsonObject ['rezept_show_id'];
 	$me = $graph->resource ( $url, 'arecipe:Recipe' );
 	foreach ( $jsonObject as $key => $value ) {
 		$type = gettype ( $value );
 		$namespace = "rdf";
+		
 		if ($type == "string") {
 			$me->set ( $namespace . ':' . $key, $value );
 		} elseif ($type == "array" && ! empty ( $value )) {
@@ -106,8 +108,20 @@ function buildGraphFromJsonRecipeResult($jsonObject) {
 						$bn = $graph->newBNode ();
 						$me->add ( $namespace . ":" . $key, $bn );
 						foreach ( $zutat as $attribut => $attributWert ) {
-							$bn->addLiteral ( $namespace . ":" . $attribut, $attributWert );
+							if ($attribut == "name" && $zutat["id"] != "") {
+								$attributWert = $str=str_replace(array('ä','ö','ü','ß','Ä','Ö','Ü'),array('ae','oe','ue','ss','Ae','Oe','Ue'),$attributWert);
+								$attributWert = preg_replace('/[^a-zA-Z0-9]+/', '', $attributWert);
+								$bn->addResource ('owl:sameAs','reweSuche:'.$attributWert);
+								$bn->addLiteral ( $namespace . ":" . $attribut, $attributWert );
+							} elseif ($attribut == "menge"){
+								$attributWert= str_replace(".", ",", $attributWert);
+								$bn->addLiteral ( $namespace . ":" . $attribut, $attributWert );
+							}
+							else {
+								$bn->addLiteral ( $namespace . ":" . $attribut, $attributWert );
+							}
 						}
+						
 					}
 					break;
 				default :
