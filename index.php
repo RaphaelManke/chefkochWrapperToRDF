@@ -10,6 +10,7 @@ require 'library/EasyRdf.php';
 include 'library/rezeptsuche.php';
 include 'library/getReweProduct.php';
 include 'library/getReweSearch.php';
+include 'library/fddbSuche.php';
 
 include_once 'library/utils.php';
 /*
@@ -37,6 +38,8 @@ foreach ($url as $key => $value){
 //$method = "explore";
 //$method = "lookup";
 //$method = "reweSuche";
+//$method="reweProduktFddb";
+//$suchbegriff = "4388844009943";
 // $suchbegriff = "390421126430613";
  //$suchbegriff = "kuchen";
 //$suchbegriff = "1211326";
@@ -60,7 +63,8 @@ switch ($method) {
 		print_r($result["results"]);
 		break;
 	case 'reweSuche' :
-		$result = getReweSearch($suchbegriff);
+		//$result = getReweSearch($suchbegriff);
+		$result = getReweSearchByApi($suchbegriff);
 		print_r($result["results"]);
 		break;
 	case 'reweProdukt' :
@@ -69,6 +73,15 @@ switch ($method) {
 		//$result2 = getReweData($suchbegriff,"turtle");
 		
 		
+		print_r($result);
+		//print_r($result2);
+		break;
+	case 'reweProduktFddb' :
+		//TODO Cleanup
+		$result = fddbSuche($suchbegriff);
+		//$result2 = getReweData($suchbegriff,"turtle");
+	
+	
 		print_r($result);
 		//print_r($result2);
 		break;
@@ -91,7 +104,7 @@ function generallSearch($suchbegriff) {
 		// var_dump($url);
 	} else {
 		echo "# Suchergebnis für die Suche nach dem Suchbegriff " . $suchbegriff . "\n";
-		$search = json_decode ( sucheRezepte ( $suchbegriff, 2 ), JSON_UNESCAPED_UNICODE );
+		$search = json_decode ( sucheRezepte ( $suchbegriff, 2 ), JSON_UNESCAPED_UNICODE |JSON_UNESCAPED_SLASHES);
 		$recipes = $search ["result"];
 		$recipeInN3 = buildGraphFromJsonSearchResult ( $recipes );
 		echo $recipeInN3->serialise ( "turtle" );
