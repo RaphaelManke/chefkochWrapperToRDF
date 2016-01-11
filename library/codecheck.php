@@ -4,8 +4,6 @@ function init(){
 	
 $username = (string)$xml -> username[0];
 $sharedSecret = (string)$xml -> key[0];
-echo $username;
-echo $sharedSecret;
 $clientNonceData = openssl_random_pseudo_bytes(16);
 $loginInfo = array(
 	'authType' => "DigestQuick",
@@ -53,6 +51,7 @@ function getCodecheckProductByEanGeneral ($ean){
 	$context = init();
 	$r = file_get_contents('http://www.codecheck.info/WebService/rest/prod/ean2/0/1/'.$ean, false, $context);
 	$r = json_decode($r);
+	print_r($r);
 	return $r->result;
 }
 function getCodecheckProductByEanAlergene ($ean){

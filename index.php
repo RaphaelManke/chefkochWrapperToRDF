@@ -11,6 +11,7 @@ include 'library/rezeptsuche.php';
 include 'library/getReweProduct.php';
 include 'library/getReweSearch.php';
 include 'library/fddbSuche.php';
+include 'library/codecheck.php';
 
 include_once 'library/utils.php';
 /*
@@ -39,6 +40,8 @@ foreach ($url as $key => $value){
 //$method = "lookup";
 //$method = "reweSuche";
 //$method="reweProduktFddb";
+//$method = "codecheckEan";
+//$suchbegriff = "4388844009974";
 //$suchbegriff = "4388844009943";
 // $suchbegriff = "390421126430613";
  //$suchbegriff = "kuchen";
@@ -83,6 +86,17 @@ switch ($method) {
 	
 	
 		print_r($result);
+		//print_r($result2);
+		break;
+	case 'codecheckEan' :
+		//TODO Cleanup
+		//echo $suchbegriff;
+		$result = getCodecheckProductByEanGeneral($suchbegriff);
+		$graph = new EasyRdf_Graph();
+		//$result2 = getReweData($suchbegriff,"turtle");
+		buildTree($graph, null ,$result);
+		echo $graph -> serialise("turtle");
+		//print_r($result);
 		//print_r($result2);
 		break;
 		
