@@ -69,7 +69,7 @@ function buildTree ($graph, $nodeId, $array){
 			}elseif (substr( $value, 0, 8 ) === "https://"){
 				$me -> addResource("rdf:".$key, $value);
 			}
-			else{
+			elseif($value != ""){
 			$me -> add("rdf:".$key, $value);}
 		}
 		else {
