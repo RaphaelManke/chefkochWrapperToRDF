@@ -71,9 +71,12 @@ function buildTree ($graph, $nodeId, $array){
 				$me -> addResource("rdf:".$key, $value);
 			}elseif (substr( $value, 0, 8 ) === "https://"){
 				$me -> addResource("rdf:".$key, $value);
+			}elseif (is_numeric($value)){
+				$me -> add("rdf:".$key, intval($value));
 			}
 			elseif($value != ""){
-			$me -> add("rdf:".$key, $value);}
+			$me -> add("rdf:".$key, $value);
+			}
 		}
 		else {
 			$bn = $graph->newBNode ();

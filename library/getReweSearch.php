@@ -72,15 +72,18 @@ function getReweSearchByApi($suchbegriff) {
 		$graph = new EasyRdf_Graph();
 		
 		foreach ($products as $key => $value){
+			if ($key < 2) {
+				
 			
 			$value["identifier"] = "searchResult";
 			$value["suchbegriff"] = $suchbegriff;
 			//$formattetArray [$resultItem] ["wrapperLink"] = "http://wrapper:8888/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
 			//$value["wrapperLink"] = "http://manke-hosting.de/wrapper/index.php/reweProdukt/".$value["url"];
-			$value["wrapperLink"] = "http://localhost/wrapper/index.php/reweProduktFddb/".$value["gtin"];
+			//$value["wrapperLink"] = "http://localhost/wrapper/index.php/reweProduktFddb/".$value["gtin"];
+			$value["wrapperLink"] = "http://wrapper:8888/index.php/codecheckEan/".$value["gtin"];
 				
 			buildTree($graph, $value["url"], $value);
-			
+			}
 			
 		}
 		echo $graph -> serialise("turtle");

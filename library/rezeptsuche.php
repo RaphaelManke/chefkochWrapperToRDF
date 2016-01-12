@@ -58,8 +58,8 @@ function buildGraphFromJsonSearchResult($jsonObject) {
 	$rezeptNamespace->set ( 'arecipe', "http://purl.org/amicroformat/arecipe/" );
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
 	//$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/" );
-	//$rezeptNamespace->set ( 'wrapper', "http://wrapper:8888/index.php/lookup/" );
-	$rezeptNamespace->set ( 'wrapper', "http://localhost/wrapper/index.php/lookup/" );
+	$rezeptNamespace->set ( 'wrapper', "http://wrapper:8888/index.php/lookup/" );
+	//$rezeptNamespace->set ( 'wrapper', "http://localhost/wrapper/index.php/lookup/" );
 	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
 	foreach ( $jsonObject as $key => $value ) {
 		$me = $graph->resource ( $baseURL . $value ['RezeptShowID'], 'arecipe:Recipe' );
@@ -88,9 +88,9 @@ function buildGraphFromJsonRecipeResult($jsonObject) {
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
 	$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/lookup/" );
 	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
-	//$rezeptNamespace->set('reweSuche', "http://wrapper:8888/index.php/reweSuche/");
+	$rezeptNamespace->set('reweSuche', "http://wrapper:8888/index.php/reweSuche/");
 	//$rezeptNamespace->set('reweSuche', "http://manke-hosting.de/wrapper/index.php/reweSuche/");
-	$rezeptNamespace->set('reweSuche', "http://localhost/wrapper/index.php/reweSuche/");
+	//$rezeptNamespace->set('reweSuche', "http://localhost/wrapper/index.php/reweSuche/");
 	$url = $baseURL . $jsonObject ['rezept_show_id'];
 	$me = $graph->resource ( $url, 'arecipe:Recipe' );
 	foreach ( $jsonObject as $key => $value ) {
