@@ -40,8 +40,8 @@ foreach ($url as $key => $value){
 //$method = "lookup";
 //$method = "reweSuche";
 //$method="reweProduktFddb";
-//$method = "codecheckEan";
-//$suchbegriff = "4388844009974";
+$method = "codecheckEan";
+$suchbegriff = "4388844009974";
 //$suchbegriff = "4388844009943";
 // $suchbegriff = "390421126430613";
  //$suchbegriff = "kuchen";
@@ -91,10 +91,10 @@ switch ($method) {
 	case 'codecheckEan' :
 		//TODO Cleanup
 		//echo $suchbegriff;
-		$result = getCodecheckProductByEanGeneral($suchbegriff);
+		$result = codecheckProductByEanGeneral($suchbegriff);
 		$graph = new EasyRdf_Graph();
 		//$result2 = getReweData($suchbegriff,"turtle");
-		buildTree($graph, null ,$result);
+		buildTree($graph, null ,$result["result"]);
 		echo $graph -> serialise("turtle");
 		//print_r($result);
 		//print_r($result2);

@@ -1,6 +1,6 @@
 <?php
 function init(){
-	$xml=simplexml_load_file("C:\Users\Raphael\git\chefkochWrapperToRDF-remote\library\login.xml") or die("Error: Cannot create object");
+	$xml=simplexml_load_file("/Users/raphaelmanke/git/chefkochWrapperToRDF/chefkochWrapperToRDF/library/login.xml") or die("Error: Cannot create object");
 	
 $username = (string)$xml -> username[0];
 $sharedSecret = (string)$xml -> key[0];
@@ -46,13 +46,13 @@ $context = stream_context_create($opts);
 return $context;
 }
 
-function getCodecheckProductByEanGeneral ($ean){
+function codecheckProductByEanGeneral ($ean){
 	$ean = preg_replace ( '/[^0-9]+/', '', $ean );
 	$context = init();
-	$r = file_get_contents('http://www.codecheck.info/WebService/rest/prod/ean2/0/1/'.$ean, false, $context);
-	$r = json_decode($r);
-	print_r($r);
-	return $r->result;
+	$r = file_get_contents('http://www.codecheck.info/WebService/rest/prod/ean2/0/33554945/'.$ean, false, $context);
+	$r = json_decode($r,true);
+	//print_r($r);
+	return $r;
 }
 function getCodecheckProductByEanAlergene ($ean){
 	$ean = preg_replace ( '/[^0-9]+/', '', $ean );
@@ -62,7 +62,7 @@ function getCodecheckProductByEanAlergene ($ean){
 	return($r->result);
 }
 function getCodecheckProductBySearch ($suchbegriff){
-	$ean = preg_replace ( '/[^a-zA-Z-0-9]+/', '', $ean );
+	$ean = preg_replace ( '/[^a-zA-Z-0-9]+/', '', $suchbegriff );
 	$context = init();
 	$r = file_get_contents('http://www.codecheck.info/WebService/rest/prod/search/0/0/30/'.$suchbegriff, false, $context);
 	$r = json_decode($r);

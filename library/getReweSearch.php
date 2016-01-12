@@ -53,6 +53,8 @@ function getReweSearchByApi($suchbegriff) {
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); //curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.22 Safari/537.36");
 	
+	
+	
 	//curl_setopt($ch, CURLOPT_COOKIE, 'language=0; sid=tjvgtpl0crv62d1tbfaoekg2n0; sid_key=oxid; SRV=varnish-local; emos_jcsid=AAABUiYqvVN0Z_u_wjUmLGQNvVezLUqz:4:AAABUiYraoSTMZkLw9NsWGps7KRP7BPZ:1452339325572; emos_jcvid=AAABUiYqvVN0Z_u_wjUmLGQNvVezLUqz:1:AAABUiYqvVN0Z_u_wjUmLGQNvVezLUqz:1452339281235:0:true:1');
 	// führe die Aktion aus und speichere die Daten
 	$data = curl_exec ( $ch );
