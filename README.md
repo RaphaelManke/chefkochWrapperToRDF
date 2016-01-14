@@ -14,3 +14,11 @@ param 2 = Der Suchbegriff dieser kann sein:
 			- ein Suchbegriff für ein Rezept
 			- eine ID eines Rezeptes sein
 			- eine Produkt Id oder Url von Rewe.
+
+WICHTIG: 
+es muss zusätzlich /library/konstanten.php angelegt mit dem Inhalt:
+
+define("HOST", "http://mein-Server/unterverzeichnis/");
+define("CODECHEK_USR", "login-name");
+define("CODECHEK_KEY", "login-key");
+
