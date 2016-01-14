@@ -7,6 +7,7 @@ header ( 'Content-Type: text/turtle; charset=UTF-8' );
  * lädt die benötigten Libarys.
  */
 require 'library/EasyRdf.php';
+require 'library/konstanten.php';
 include 'library/rezeptsuche.php';
 include 'library/getReweProduct.php';
 include 'library/getReweSearch.php';

@@ -2,6 +2,7 @@
 include 'simple_html_dom.php';
 include_once 'utils.php';
 include_once 'EasyRdf.php';
+include_once 'konstanten.php';
 function getHtml ($base) {
 	
 	$curl = curl_init();
@@ -148,7 +149,7 @@ function toTurtle ($array) {
 	$graph = new EasyRdf_Graph();
 	$rezeptNamespace = new EasyRdf_Namespace ();
 	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
-	$rezeptNamespace->set ( 'wrapper', "http://manke-hosting.de/wrapper/index.php/lookup/" );
+	$rezeptNamespace->set ( 'wrapper', HOST . "index.php/lookup/" );
 	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
 	buildTree($graph, $array["link"], $array);
 	return $graph->serialise ( "turtle" );

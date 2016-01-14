@@ -3,6 +3,7 @@
 include_once 'utils.php';
 include_once 'getReweSearch.php';
 include_once 'getReweProduct.php';
+include_once 'konstanten.php';
 function fddbSuche($gtin) {
 	
 	//$gtin = "4388844009943";

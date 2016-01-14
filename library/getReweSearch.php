@@ -1,6 +1,7 @@
 <?php
 include_once 'utils.php';
 require 'EasyRdf.php';
+include_once 'konstanten.php';
 function getReweSearch($suchbegriff) {
 	 //$suchbegriff = "milch";
 	$suchbegriff = preg_replace ( '/[^a-zA-Z0-9]+/', '', $suchbegriff );
@@ -21,7 +22,7 @@ function getReweSearch($suchbegriff) {
 		$formattetArray [$resultItem] ["identifier"] = "searchResult";
 		$formattetArray [$resultItem] ["suchbegriff"] = $suchbegriff;
 		//$formattetArray [$resultItem] ["wrapperLink"] = "http://wrapper:8888/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
-		$formattetArray [$resultItem] ["wrapperLink"] = "http://manke-hosting.de/wrapper/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
+		$formattetArray [$resultItem] ["wrapperLink"] = HOST."index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
 	}
 	//print_r($result);
 	// print_r($formattetArray);
@@ -80,7 +81,7 @@ function getReweSearchByApi($suchbegriff) {
 			//$formattetArray [$resultItem] ["wrapperLink"] = "http://wrapper:8888/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
 			//$value["wrapperLink"] = "http://manke-hosting.de/wrapper/index.php/reweProdukt/".$value["url"];
 			//$value["wrapperLink"] = "http://localhost/wrapper/index.php/reweProduktFddb/".$value["gtin"];
-			$value["wrapperLink"] = "http://wrapper:8888/index.php/codecheckEan/".$value["gtin"];
+			$value["wrapperLink"] = HOST."index.php/codecheckEan/".$value["gtin"];
 				
 			buildTree($graph, $value["url"], $value);
 			}

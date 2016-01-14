@@ -1,5 +1,5 @@
 <?php
-
+include_once 'konstanten.php';
 
     function after ($this, $inthat)
     {
