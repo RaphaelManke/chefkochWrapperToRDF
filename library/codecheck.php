@@ -1,9 +1,9 @@
 <?php
+include_once 'konstanten.php';
 function init(){
-	$xml=simplexml_load_file("/Users/raphaelmanke/git/chefkochWrapperToRDF/chefkochWrapperToRDF/library/login.xml") or die("Error: Cannot create object");
 	
-$username = (string)$xml -> username[0];
-$sharedSecret = (string)$xml -> key[0];
+$username = CODECHEK_USR;
+$sharedSecret = CODECHEK_KEY;
 $clientNonceData = openssl_random_pseudo_bytes(16);
 $loginInfo = array(
 	'authType' => "DigestQuick",
