@@ -18,7 +18,7 @@ param 2 = Der Suchbegriff dieser kann sein:
 WICHTIG: 
 es muss zusätzlich /library/konstanten.php angelegt mit dem Inhalt:
 
-define("HOST", "http://mein-Server/unterverzeichnis/");
-define("CODECHEK_USR", "login-name");
+define("HOST", "http://mein-Server/unterverzeichnis/"); <br>
+define("CODECHEK_USR", "login-name"); <br>
 define("CODECHEK_KEY", "login-key");
 
