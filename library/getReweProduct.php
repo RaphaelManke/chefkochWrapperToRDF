@@ -148,10 +148,10 @@ function getReweDataByApi($idOrLink, $format) {
 function toTurtle ($array) {
 	$graph = new EasyRdf_Graph();
 	$rezeptNamespace = new EasyRdf_Namespace ();
-	$rezeptNamespace->set ( 'rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
+	$rezeptNamespace->set ( 'rezept', "http://manke-hosting.de/ns-syntax#" );
 	$rezeptNamespace->set ( 'wrapper', HOST . "index.php/lookup/" );
 	$rezeptNamespace->set ( 'owl', "http://www.w3.org/2002/07/owl#" );
-	buildTree($graph, $array["link"], $array);
+	buildTree($graph, $array["link"], $array, "rezept");
 	return $graph->serialise ( "turtle" );
 };
 

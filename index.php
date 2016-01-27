@@ -94,8 +94,11 @@ switch ($method) {
 		//echo $suchbegriff;
 		$result = codecheckProductByEanGeneral($suchbegriff);
 		$graph = new EasyRdf_Graph();
+		$namespace = new EasyRdf_Namespace ();
+		$namespace->set ( 'rezept', "http://manke-hosting.de/ns-syntax#" );
+		
 		//$result2 = getReweData($suchbegriff,"turtle");
-		buildTree($graph, null ,$result["result"]);
+		buildTree($graph, null ,$result["result"],"rezept");
 		echo $graph -> serialise("turtle");
 		//print_r($result);
 		//print_r($result2);

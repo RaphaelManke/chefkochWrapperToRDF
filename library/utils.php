@@ -59,29 +59,30 @@ function curlData($url) {
 	curl_close ( $ch );
 	return (String) $result;
 };
-function buildTree ($graph, $nodeId, $array){
+function buildTree ($graph, $nodeId, $array, $namespace){
 	if (!isset($nodeId)) {
 		$nodeId = $graph->newBNode();
-	}
+	}	
+	
 	$me = $graph-> resource ($nodeId);
 	foreach ($array as $key => $value){
 		$type = gettype ( $value );
 		if ($type != "array") {
 			if (substr( $value, 0, 7 ) === "http://") {
-				$me -> addResource("rdf:".$key, $value);
+				$me -> addResource($namespace.":".$key, $value);
 			}elseif (substr( $value, 0, 8 ) === "https://"){
-				$me -> addResource("rdf:".$key, $value);
+				$me -> addResource($namespace.":".$key, $value);
 			}elseif (is_numeric($value)){
-				$me -> add("rdf:".$key, intval($value));
+				$me -> add($namespace.":".$key, intval($value));
 			}
 			elseif($value != ""){
-			$me -> add("rdf:".$key, $value);
+			$me -> add($namespace.":".$key, $value);
 			}
 		}
 		else {
 			$bn = $graph->newBNode ();
-			$me -> add("rdf:".$key, $bn);
-			buildTree($graph, $bn, $value);
+			$me -> add($namespace.":".$key, $bn);
+			buildTree($graph, $bn, $value, $namespace);
 		}
 
 	}
