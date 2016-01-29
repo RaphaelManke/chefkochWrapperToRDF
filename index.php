@@ -2,7 +2,7 @@
 /*
  * definiert den Header.
  */
-header ( 'Content-Type: text/turtle; charset=UTF-8' );
+header("Content-Type: text/turtle; charset=utf-8");
 /*
  * lädt die benötigten Libarys.
  */
@@ -88,6 +88,15 @@ switch ($method) {
 	
 		print_r($result);
 		//print_r($result2);
+		break;
+	case 'reweProduktWrapper' :
+		$result = getReweProductByPageWrapper($suchbegriff);
+		$graph = new EasyRdf_Graph();
+		$namespace = new EasyRdf_Namespace ();
+		$namespace->set ( 'rezept', "http://manke-hosting.de/ns-syntax#" );
+		
+		buildTree($graph, $result["url"],$result,"rezept");
+		echo $graph -> serialise("turtle");
 		break;
 	case 'codecheckEan' :
 		//TODO Cleanup

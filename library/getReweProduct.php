@@ -86,6 +86,7 @@ function getReweData($idOrLink, $format){
 function getReweDataByApi($idOrLink, $format) {
 	//$suchbegriff = "milch";
 	//$suchbegriff = preg_replace ( '/[^a-zA-Z0-9]+/', '', $suchbegriff );
+	 
 	$id = preg_replace('/[^0-9]+/', '',  after_last("/PD", $idOrLink));
 	if ($id == ""){
 		$id = preg_replace('/[^0-9]+/', '',  $idOrLink);
@@ -117,8 +118,10 @@ function getReweDataByApi($idOrLink, $format) {
 		//$formattetArray [$resultItem] ["suchbegriff"] = $suchbegriff;
 		//$formattetArray [$resultItem] ["wrapperLink"] = "http://wrapper:8888/index.php/reweProdukt/".$formattetArray [$resultItem]["headlineitem-link"];
 	}
+	$link = str_replace('https:/', 'https://',  substr($idOrLink,0,-1));
+	$link =  str_replace('https:///', 'https://', $link);
 	$array = array(
-			"link" => str_replace('https:/', 'https://',  substr($idOrLink,0,-1)), 
+			"link" => $link, 
 			"naehrwerte" => $formattetArray );
 	
 	//print_r($result);
@@ -155,7 +158,56 @@ function toTurtle ($array) {
 	return $graph->serialise ( "turtle" );
 };
 
-//$comment = $html->find('comment');
-// print_r(getReweData("7890168"))."\n";
-// echo "second \n";
-// print_r(getReweData("https://shop.rewe.de/kuehlprodukte/eier/rewe-bio-frische-bio-eier-6-stueck/PD197892"))."\n";
+function getReweProductByPageWrapper ($url){
+	$url = 'https://shop.rewe.de/kochen-backen/tomatenketchup/knorr-tomaten-ketchup-430ml/PD2360602';
+	
+	
+	$curl = curl_init();
+	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+	curl_setopt($curl, CURLOPT_HEADER, false);
+	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_REFERER, $url);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	$str = curl_exec($curl);
+	curl_close($curl);
+	
+	$result["url"] = $url;
+	// Create a DOM object
+	$html_base = new simple_html_dom();
+	// Load HTML from a string
+	$html_base->load($str);
+	foreach($html_base->find('.nutritional-values') as $element) {
+		$skip=true;
+		foreach($element->find('tbody tr') as $element1){
+			if (!$skip) {
+				$str = $element1->children(0)->innertext;
+				$str=str_replace(array('ä','ö','ü','ß','Ä','Ö','Ü'),array('ae','oe','ue','ss','Ae','Oe','Ue'),$str);
+				$temp[preg_replace('/[^a-zA-Z]+/', '_', $str)] = array(
+						"value" => preg_replace('/[^0-9,.]+/', '',$element1->children(1)->innertext),
+						"currency" => preg_replace('/[^a-zA-Z]+/', '',$element1->children(1)->innertext)
+				);
+			} else {
+				$skip = false;
+			}
+		}
+		$result["naehrwerte"] = $temp;
+		unset($temp);
+	
+	}
+	foreach ($html_base->find('.rs-price--base') as $basePrice){
+		$base= between("(", ")", $basePrice->innertext);
+		$temp = array(
+				"baseValue" => array(
+						"value"=>preg_replace('/[^0-9,.]+/', '',before(" =", $base)),
+						"currencie" => preg_replace('/[^a-zA-Z,.]+/', '',before(" =", $base))
+				),
+				"basePrice"	=> 	floatval(str_replace(",", ".", preg_replace('/[^0-9,.]+/', '',after("= ",$base)))) *100
+		);
+	}
+	$result["baseValueInfo"] = $temp;
+	
+	$html_base->clear();
+	unset($html_base);
+	return $result;
+}
