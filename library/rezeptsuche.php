@@ -105,7 +105,10 @@ function buildGraphFromJsonRecipeResult($jsonObject) {
 				case 'rezept_videos' :
 					// TODO
 					break;
-				case 'rezept_in_rezeptsammlung' :
+				case 'rezept_bilder' :
+					$bn = $graph->newBNode ();
+					$me->set ( $namespace . ':' . $key, $bn );
+					buildTree($graph, $bn, $value, 'rezept');
 					break;
 				case 'rezept_zutaten' :
 					foreach ( $value as $rezept_zutaten => $zutat ) {
