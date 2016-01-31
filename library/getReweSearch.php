@@ -126,6 +126,7 @@ function getReweSearchByApi($suchbegriff) {
 			//$value["wrapperLink"] = "http://localhost/wrapper/index.php/reweProduktFddb/".$value["gtin"];
 			$value["codecheckWrapperLink"] = HOST."index.php/codecheckEan/".$value["gtin"];
 			$value["reweProduktWrapperLink"] = HOST."index.php/reweProduktWrapper/".$value["url"];
+			$value["fddbWrapperLink"] = HOST."index.php/reweProduktFddb/".$value["gtin"];
 				
 			buildTree($graph, $value["url"], $value, "rezept");
 			}

@@ -60,10 +60,9 @@ function curlData($url) {
 	return (String) $result;
 };
 function buildTree ($graph, $nodeId, $array, $namespace){
-	if (!isset($nodeId)) {
+if (!isset($nodeId)) {
 		$nodeId = $graph->newBNode();
-	}	
-	
+	}
 	$me = $graph-> resource ($nodeId);
 	foreach ($array as $key => $value){
 		$type = gettype ( $value );

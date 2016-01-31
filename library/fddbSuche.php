@@ -15,10 +15,10 @@ function fddbSuche($gtin) {
 	if ($link != false && strlen($gtin) >= 13){
 		
 	$werte = array(
-			"Energie" => before("(", $area),
-			"Energie1" => between("(", ")", $area),
-			"Fett" => between("Fett: ", "KH:", $area),
-			"Kohlenhydrate" => between("KH: ", "<br>", $area));
+			"energy" => preg_replace('/[^0-9,.]+/', '',before("(", $area)),
+			"calories" => preg_replace('/[^0-9,.]+/', '',between("(", ")", $area)),
+			"fat" => preg_replace('/[^0-9,.]+/', '',between("Fett: ", "KH:", $area)),
+			"carbonhydrate" => preg_replace('/[^0-9,.]+/', '',between("KH: ", "<br>", $area)));
 	//$werte = array("Energie", "Energie1", "Fett", "Kohlenhydrate");
 	$naerhwerte ="";
 	foreach ($werte as $key => $value) {
@@ -27,13 +27,17 @@ function fddbSuche($gtin) {
 	}
 	
 	$result = array(
+			"sourecName" => "fddb",
 			"link" => $link,
 			"gtin" => $gtin,
-			"naehrwerte" => $naerhwerte,
+			"nutriTable" => $werte,
 			"titel" => between("<a href='".$link."'><b>", '</b></a>', $resultblock)
 	);
 	$graph = new EasyRdf_Graph();
-	buildTree($graph, $result["link"], $result);
+	$namespace = new EasyRdf_Namespace ();
+	$namespace->set( 'rezept', "http://manke-hosting.de/ns-syntax#" );
+	
+	buildTree($graph, $result["link"], $result,'rezept');
 	echo $graph -> serialise("turtle");
 	}
 }
